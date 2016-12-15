@@ -1,0 +1,64 @@
+/*
+HC-SR04 Ping distance sensor]
+ VCC to arduino 5v GND to arduino GND
+ Echo to Arduino pin 13 Trig to Arduino pin 12
+ Red POS to Arduino pin 11
+ Green POS to Arduino pin 10
+ 560 ohm resistor to both LED NEG and GRD power rail
+ More info at: http://goo.gl/kJ8Gl
+ Original code improvements to the Ping sketch sourced from Trollmaker.com
+ Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robotcar
+ */
+
+#include <Servo.h> 
+
+#define trigPin 13
+#define echoPin 12
+
+Servo myservo1; // create servo object to control a servo
+Servo myservo2; 
+Servo myservo3; 
+int pos = 0;
+
+void setup() {
+  Serial.begin (9600);
+  myservo1.attach(7);//attaches the servo on pin 7 to the servo object 
+  myservo1.attach(8);//attaches the servo on pin 8 to the servo object 
+  myservo1.attach(9); //attaches the servo on pin 9 to the servo object 
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+void loop() {
+  long duration, distance;
+  digitalWrite(trigPin, LOW); 
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10); 
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+  if (distance < 50) {  // measures the distance
+    for(pos = 75; pos <= 90; pos += 1) // goes from 75 degrees to 90 degrees 
+    {                                  // in steps of 1 degree 
+      myservo1.write(pos);              // tell servo to go to position in variable 'pos' 
+      delay(5); 
+      myservo2.write(pos);              // tell servo to go to position in variable 'pos' 
+      delay(5); 
+      myservo3.write(pos);              // tell servo to go to position in variable 'pos' 
+      delay(5);     // waits 5ms for the servo to reach the position 
+    } 
+    for(pos = 90; pos>=75; pos-=1)     // goes from 90 degrees to 75 degrees 
+    {                                
+      myservo1.write(pos);
+      myservo2.write(pos);
+      myservo3.write(pos);// tell servo to go to position in variable 'pos' 
+      delay(5);                       // waits 5ms for the servo to reach the position 
+    } 
+  }
+  else {  
+  } 
+}
+
+
+
